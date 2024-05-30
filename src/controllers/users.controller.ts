@@ -1,13 +1,14 @@
+import { Request, Response } from 'express';
 import User from '../models/user.model.js';
 import * as bcrypt from 'bcrypt';
-import 'dotenv/config'
+import 'dotenv/config';
 
-const salts = parseInt(process.env.BCRYPT_SALT);
+const salts: number = parseInt(process.env.BCRYPT_SALT as string, 10);
 
-const index = async (req, res) => {
+export const index = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const page = parseInt(req.query.page);
-        const limit = parseInt(req.query.limit);
+        const page = parseInt(req.query.page as string, 10);
+        const limit = parseInt(req.query.limit as string, 10);
         const offset = (page - 1) * limit;
 
         const users = await User.findAll(limit, offset);
@@ -21,12 +22,12 @@ const index = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "ocurrió un error al obtener los usuarios",
-            error: error.message
+            error: (error as Error).message
         });
     }
 }
 
-const show = async (req, res) => {
+export const show = async (req: Request, res: Response): Promise<Response> => {
     try {
         const id = req.params.id;
         const user = await User.getById(id);
@@ -47,12 +48,12 @@ const show = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "ocurrió un error al obtener el usuario",
-            error: error.message
+            error: (error as Error).message
         });
     }
 }
 
-const createUser = async (req, res) => {
+export const createUser = async (req: Request, res: Response): Promise<Response> => {
     try {
         const encryptedPassword = bcrypt.hashSync(req.body.password, salts);
 
@@ -63,18 +64,16 @@ const createUser = async (req, res) => {
 
         await user.create();
 
-        return(user);
+        return res.status(201).json({
+            success: true,
+            user,
+            message: "se creó el usuario correctamente"
+        });
     } catch (error) {
         return res.status(500).json({
             success: false,
             message: "ocurrió un error al crear el usuario",
-            error: error.message
+            error: (error as Error).message
         });
     }
-}
-
-export {
-    index,
-    show,
-    createUser
 }

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import * as electionsController from "../controllers/elections.controller.js";
-import { httpAuthMiddleware } from "../middlewares/http/auth.middleware.js";
+import * as electionsController from "../controllers/elections.controller";
+import { httpAuthMiddleware } from "../middlewares/http/auth.middleware";
 
 const electionsRouter = Router();
 

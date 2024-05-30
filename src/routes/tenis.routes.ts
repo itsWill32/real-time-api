@@ -1,6 +1,6 @@
 import { Router } from "express";
-import * as tenisController from "../controllers/tenis.controller.js"
-import { httpAuthMiddleware } from "../middlewares/http/auth.middleware.js";
+import * as tenisController from "../controllers/tenis.controller"
+import { httpAuthMiddleware } from "../middlewares/http/auth.middleware";
 
 const tenisRouter = Router();
 

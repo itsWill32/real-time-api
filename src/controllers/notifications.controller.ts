@@ -1,9 +1,10 @@
-import Notification from "../models/notification.model.js";
+import { Request, Response } from 'express';
+import Notification from '../models/notification.model.js';
 
-const index = async (req, res) => {
+export const index = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const page = parseInt(req.query.page);
-        const limit = parseInt(req.query.limit);
+        const page = parseInt(req.query.page as string);
+        const limit = parseInt(req.query.limit as string);
         const offset = (page - 1) * limit;
 
         const notifications = await Notification.findAllActive(limit, offset);
@@ -17,12 +18,12 @@ const index = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "ocurrió un error al obtener las notificaciones",
-            error: error.message
+            error: (error as Error).message
         });
     }
 }
 
-const closeNotification = async (req, res) => {
+export const closeNotification = async (req: Request, res: Response): Promise<Response> => {
     try {
         const id = req.params.notificationId;
         const notification = await Notification.closeNotification(id);
@@ -43,12 +44,7 @@ const closeNotification = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "ocurrió un error al cerrar la notificación",
-            error: error.message
+            error: (error as Error).message
         });
     }
-}
-
-export {
-    index,
-    closeNotification
 }

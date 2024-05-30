@@ -1,9 +1,15 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
-const { Schema, model } = mongoose;
+interface ElectionDocument extends Document {
+    optionOneId: string;
+    optionTwoId: string;
+    expiration: Date;
+    optionOneVotes: number;
+    optionTwoVotes: number;
+    expired: boolean;
+}
 
-// Definimos el esquema de Election
-const electionSchema = new Schema({
+const electionSchema: Schema<ElectionDocument> = new Schema({
     optionOneId: { type: String, required: true },
     optionTwoId: { type: String, required: true },
     expiration: { type: Date, required: true },
@@ -12,20 +18,26 @@ const electionSchema = new Schema({
     expired: { type: Boolean, default: false },
 }, { timestamps: true });
 
-// Creamos el modelo de Election a partir del esquema
-const ElectionModel = model('Election', electionSchema);
+const ElectionModel: Model<ElectionDocument> = mongoose.model('Election', electionSchema);
 
 class Election {
-    constructor({ id, optionOneId, optionTwoId, expiration, optionOneVotes, optionTwoVotes }) {
-        this.id = id;
-        this.optionOneId = optionOneId;
-        this.optionTwoId = optionTwoId;
-        this.expiration = expiration;
-        this.optionOneVotes = optionOneVotes;
-        this.optionTwoVotes = optionTwoVotes;
+    id: string;
+    optionOneId: string;
+    optionTwoId: string;
+    expiration: Date;
+    optionOneVotes: number;
+    optionTwoVotes: number;
+
+    constructor({ id, optionOneId, optionTwoId, expiration, optionOneVotes, optionTwoVotes }: Partial<ElectionDocument>) {
+        this.id = id || '';
+        this.optionOneId = optionOneId || '';
+        this.optionTwoId = optionTwoId || '';
+        this.expiration = expiration || new Date();
+        this.optionOneVotes = optionOneVotes || 0;
+        this.optionTwoVotes = optionTwoVotes || 0;
     }
 
-    static async findAll(limit, offset) {
+    static async findAll(limit: number, offset: number): Promise<ElectionDocument[]> {
         const elections = await ElectionModel.find()
             .skip(offset)
             .limit(limit)
@@ -33,12 +45,12 @@ class Election {
         return elections;
     }
 
-    static async findById(id) {
+    static async findById(id: string): Promise<ElectionDocument | null> {
         const election = await ElectionModel.findById(id).exec();
         return election;
     }
 
-    async create() {
+    async create(): Promise<ElectionDocument> {
         const election = new ElectionModel({
             optionOneId: this.optionOneId,
             optionTwoId: this.optionTwoId,
@@ -47,22 +59,22 @@ class Election {
             optionTwoVotes: this.optionTwoVotes
         });
         const savedElection = await election.save();
-        this.id = savedElection._id;
+        this.id = (savedElection._id as string).toString(); // Convertir ObjectId a string
         return savedElection;
     }
 
-    static async update(id, electionData) {
+    static async update(id: string, electionData: Partial<ElectionDocument>): Promise<ElectionDocument | null> {
         const updatedElection = await ElectionModel.findByIdAndUpdate(id, electionData, { new: true }).exec();
         return updatedElection;
     }
 
-    static async delete(id) {
+    static async delete(id: string): Promise<ElectionDocument | null> {
         const deletedElection = await ElectionModel.findByIdAndDelete(id).exec();
         return deletedElection;
     }
 
-    static async vote(option, id) {
-        let update;
+    static async vote(option: string, id: string): Promise<ElectionDocument | null> {
+        let update: any;
         if (option === "optionOne") {
             update = { $inc: { optionOneVotes: 1 } };
         } else if (option === "optionTwo") {
@@ -72,7 +84,7 @@ class Election {
         return voteResult;
     }
 
-    static async expire(id) {
+    static async expire(id: string): Promise<ElectionDocument | null> {
         const expiredElection = await ElectionModel.findByIdAndUpdate(id, { expired: true }, { new: true }).exec();
         return expiredElection;
     }

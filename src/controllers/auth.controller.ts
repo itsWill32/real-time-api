@@ -1,17 +1,18 @@
 import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-const secretJWT = process.env.SECRET_JWT;
+import { Request, Response } from 'express';
 import { createUser } from './users.controller.js';
 import User from '../models/user.model.js';
 
+const secretJWT = process.env.SECRET_JWT as string;
 const { sign } = jwt;
 
-export const login = async (req, res) => {
+export const login = async (req: Request, res: Response): Promise<Response> => {
     const { email, password } = req.body;
     const userFound = await User.getByEmail(email);
 
-    console.log(secretJWT)
-    console.log(email)
+    console.log(secretJWT);
+    console.log(email);
 
     if (!userFound) {
         return res.status(401).json({
@@ -19,7 +20,7 @@ export const login = async (req, res) => {
         });
     }
 
-    const isCorrectPass = bcrypt.compareSync(password, userFound.password)
+    const isCorrectPass = bcrypt.compareSync(password, userFound.password);
 
     if (!isCorrectPass) {
         return res.status(401).json({
@@ -31,7 +32,7 @@ export const login = async (req, res) => {
         user: {
             id: userFound.id
         }
-    }
+    };
 
     const token = sign(payload, secretJWT, { expiresIn: '5h' });
 
@@ -41,8 +42,7 @@ export const login = async (req, res) => {
     });
 }
 
-export const signUp = async(req, res) => {
-    // const { email, password, username,  } = req.body;
+export const signUp = async (req: Request, res: Response): Promise<Response> => {
     const email = req.body.email;
 
     const userFound = await User.getByEmail(email);
@@ -57,7 +57,7 @@ export const signUp = async(req, res) => {
 
     return res.status(201).json({
         success: true,
-        data:user,
+        data: user,
         message: "se registró el usuario correctamente"
     });
 
