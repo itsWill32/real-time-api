@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Notification from '../models/notification.model.js';
+import Notification from '../models/notification.model';
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
     try {

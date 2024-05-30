@@ -1,4 +1,4 @@
-import Election from '../models/election.model.js';
+import Election from '../models/election.model';
 import { WebSocket, WebSocketServer } from 'ws';
 
 interface VotePayload {

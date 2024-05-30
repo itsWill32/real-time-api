@@ -1,8 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
-import { createUser } from './users.controller.js';
-import User from '../models/user.model.js';
+import { createUser } from './users.controller';
+import User from '../models/user.model';
 
 const secretJWT = process.env.SECRET_JWT as string;
 const { sign } = jwt;

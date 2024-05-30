@@ -10,7 +10,7 @@ import { registerElectionHandlers } from './handlers/election.handler';
 import { websocketAuthMiddleware } from './middlewares/websocket/auth.middleware';
 
 const port: number | string = process.env.PORT || 3003;
-const origin: string | undefined = process.env.CORSORIGIN;
+// const origin: string | undefined = process.env.CORSORIGIN;
 const httpServerPort: number = parseInt(port as string) + 1;
 
 const app = express();
@@ -38,5 +38,5 @@ wss.on('connection', (ws: WebSocket, req: express.Request) => {
 });
 
 server.listen(httpServerPort, () => {
-    signale.success("Servidor HTTP y WebSocket iniciado en el puerto " + httpServerPort);
+    signale.success("Servidor HTTP iniciado en el puerto " + httpServerPort + " y servidor WebSocket iniciado en el puerto " + port);
 });

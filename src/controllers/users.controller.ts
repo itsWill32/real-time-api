@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../models/user.model.js';
+import User from '../models/user.model';
 import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
 

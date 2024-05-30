@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Tenis from '../models/tenis.model.js';
+import Tenis from '../models/tenis.model';
 
 export const createTenis = async (req: Request, res: Response): Promise<Response> => {
     try {
