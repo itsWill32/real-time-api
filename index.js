@@ -8,7 +8,7 @@ import { connectToDatabase } from './src/configs/db.config.js';
 
 import { router as routes } from './src/routes/index.js';
 import { socketioAuthMiddleware } from './src/middlewares/socketio/auth.middleware.js';
-// import { registerDocumentsHandlers } from './src/handlers/document.handler.js';
+import { registerElectionHandlers } from './src/handlers/election.handler.js';
 
 const port = process.env.PORT || 3003;
 const origin = process.env.CORSORIGIN;
@@ -34,6 +34,7 @@ io.use(socketioAuthMiddleware);
 
 const onConnection = (socket) => {
     // registerDocumentsHandlers(io, socket);
+    registerElectionHandlers(io, socket);
     signale.success("Cliente conectado: " + socket.id);
 }
 
