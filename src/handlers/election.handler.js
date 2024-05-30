@@ -41,3 +41,43 @@ export const registerElectionHandlers = (io, socket) => {
 
     socket.on("election:vote", voteElection);
 };
+
+// Ejemplo de frontend para enviar un voto a través de WebSocket
+// <body>
+//     <script>
+//         // Conectar al servidor WebSocket
+//         const ws = new WebSocket('ws://localhost:3004');
+
+//         // Manejar la conexión abierta
+//         ws.onopen = () => {
+//             console.log('Conectado al servidor WebSocket');
+
+//             // Enviar un mensaje de voto
+//             const voteMessage = {
+//                 type: 'election:vote',
+//                 payload: {
+//                     electionId: '60d1f965bc64a35d88f9e345',
+//                     option: 'optionOne'
+//                 }
+//             };
+
+//             ws.send(JSON.stringify(voteMessage));
+//         };
+
+//         // Manejar mensajes recibidos
+//         ws.onmessage = (event) => {
+//             const message = JSON.parse(event.data);
+//             console.log('Mensaje recibido del servidor:', message);
+//         };
+
+//         // Manejar la conexión cerrada
+//         ws.onclose = () => {
+//             console.log('Conexión cerrada');
+//         };
+
+//         // Manejar errores
+//         ws.onerror = (error) => {
+//             console.error('Error en la conexión WebSocket:', error);
+//         };
+//     </script>
+// </body>
