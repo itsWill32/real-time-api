@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { WebSocket } from 'ws';
 
-const secretJWT = process.env.SECRET_JWT as string;
+const secretJWT = process.env.SECRET_JWT as string || 'secret';
 const { verify } = jwt;
 
 const authenticate = (ws: WebSocket, req: any, next: any): void => {

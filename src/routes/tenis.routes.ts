@@ -5,7 +5,7 @@ import { httpAuthMiddleware } from "../middlewares/http/auth.middleware";
 const tenisRouter = Router();
 
 tenisRouter.post('/', httpAuthMiddleware, tenisController.createTenis);
-tenisRouter.get('/', httpAuthMiddleware, tenisController.getById);
-tenisRouter.get('/', httpAuthMiddleware, tenisController.index);
+tenisRouter.get('/:id', tenisController.getById);
+tenisRouter.get('/', tenisController.index);
 
 export default tenisRouter;

@@ -249,7 +249,8 @@ const getVotationsByUser = async (req: Request, res: Response): Promise<Response
     }
 }
 
-const electionExpired = async (): Promise<void> => {
+//short polling
+const electionExpired = async (req: Request, res: Response): Promise<Response> => {
     try {
         const elections = await Election.findAll(0, 0);
         const now = new Date();
@@ -274,10 +275,12 @@ const electionExpired = async (): Promise<void> => {
 
                 let notificationText: string;
                 if (winningOption === 'tie') {
+                    console.log('Empate');
                     notificationText = 'La elección de la votación entre las dos opciones ha terminado en empate.';
                 } else {
                     const winningOptionId = winningOption === 'optionOne' ? election.optionOneId : election.optionTwoId;
                     const winningTenis = await Tenis.findById(winningOptionId);
+                    console.log('winner',winningTenis)
 
                     if (winningTenis) {
                         notificationText = `El ganador en la última votación en la que participaste es: ${winningTenis.brand} - ${winningTenis.name}.`;
@@ -297,12 +300,20 @@ const electionExpired = async (): Promise<void> => {
 
                     await notification.create();
                 }
-
-                refreshClients(election);
             }
         }
+
+        return res.status(200).json({
+            success: true,
+            message: "Se han expirado las elecciones correctamente"
+        });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Ocurrió un error al expirar las elecciones",
+            error: (error as Error).message
+        });
     }
 };
 

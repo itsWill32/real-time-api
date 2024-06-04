@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-const secretJWT = process.env.SECRET_JWT as string;
+const secretJWT = process.env.SECRET_JWT as string || 'secret';
 const { verify } = jwt;
 
 interface CustomRequest extends Request {

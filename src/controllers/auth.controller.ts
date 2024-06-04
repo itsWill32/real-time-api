@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { createUser } from './users.controller';
 import User from '../models/user.model';
 
-const secretJWT = process.env.SECRET_JWT as string;
+const secretJWT = process.env.SECRET_JWT as string || 'secret';
 const { sign } = jwt;
 
 export const login = async (req: Request, res: Response): Promise<Response> => {
@@ -60,8 +60,4 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
         data: user,
         message: "se registró el usuario correctamente"
     });
-
-    //aquí no se generará token, una vez registrado, el usuario será enviado
-    //a la ventana de inicio de sesión, en donde ingresará sus datos, y allí
-    //se generará su token
 }

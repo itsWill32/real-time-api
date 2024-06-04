@@ -38,11 +38,16 @@ class Election {
     }
 
     static async findAll(limit: number, offset: number): Promise<ElectionDocument[]> {
-        const elections = await ElectionModel.find()
-            .skip(offset)
-            .limit(limit)
-            .exec();
-        return elections;
+        if (limit === 0 && offset === 0) {
+            const elections = await ElectionModel.find({ expired: false }).exec();
+            return elections;
+        } else {
+            const elections = await ElectionModel.find({ expired: false })
+                .skip(offset)
+                .limit(limit)
+                .exec();
+            return elections;
+        }
     }
 
     static async findById(id: string): Promise<ElectionDocument | null> {
@@ -80,7 +85,12 @@ class Election {
         } else if (option === "optionTwo") {
             update = { $inc: { optionTwoVotes: 1 } };
         }
+
+        const vote = await Election.findById(id);
+        console.log(vote);
+
         const voteResult = await ElectionModel.findByIdAndUpdate(id, update, { new: true }).exec();
+        console.log(voteResult);
         return voteResult;
     }
 

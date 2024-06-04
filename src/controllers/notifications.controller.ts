@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import Notification from '../models/notification.model';
 
+interface CustomRequest extends Request {
+    user?: any;
+}
+
 export const index = async (req: Request, res: Response): Promise<Response> => {
     try {
         const page = parseInt(req.query.page as string);
@@ -8,6 +12,27 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
         const offset = (page - 1) * limit;
 
         const notifications = await Notification.findAllActive(limit, offset);
+
+        return res.status(200).json({
+            success: true,
+            notifications,
+            message: "se obtuvieron las notificaciones correctamente"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "ocurrió un error al obtener las notificaciones",
+            error: (error as Error).message
+        });
+    }
+}
+
+export const getNotificationsByUser = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId = (req as CustomRequest).user.id;
+        console.log("userId notifications", userId)
+        const notifications = await Notification.findByUserId(userId);
+        console.log("notifications", notifications)
 
         return res.status(200).json({
             success: true,

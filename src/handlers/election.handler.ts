@@ -11,6 +11,7 @@ export const registerElectionHandlers = (wss: WebSocketServer, ws: WebSocket, pa
     const voteElection = async (payload: VotePayload): Promise<void> => {
         try {
             const { electionId, option } = payload;
+            console.log(payload);
             // option puede ser "optionOne" o "optionTwo"
 
             const updatedElection = await Election.vote(option, electionId);
