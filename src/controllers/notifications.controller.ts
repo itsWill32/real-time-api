@@ -30,9 +30,8 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 export const getNotificationsByUser = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).user.id;
-        console.log("userId notifications", userId)
+        console.log("userId notifications", userId);
         const notifications = await Notification.findByUserId(userId);
-        console.log("notifications", notifications)
 
         return res.status(200).json({
             success: true,
@@ -51,6 +50,7 @@ export const getNotificationsByUser = async (req: Request, res: Response): Promi
 export const closeNotification = async (req: Request, res: Response): Promise<Response> => {
     try {
         const id = req.params.notificationId;
+        const userId = (req as CustomRequest).user.id;
         const notification = await Notification.closeNotification(id);
 
         if (!notification) {
@@ -60,9 +60,12 @@ export const closeNotification = async (req: Request, res: Response): Promise<Re
             });
         }
 
+        const notifications = await Notification.findByUserId(userId);
+
         return res.status(200).json({
             success: true,
             notification,
+            notifications,
             message: "se cerró la notificación correctamente"
         });
     } catch (error) {

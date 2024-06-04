@@ -257,6 +257,7 @@ const electionExpired = async (req: Request, res: Response): Promise<Response> =
 
         for (const election of elections) {
             if (new Date(election.expiration) < now && !election.expired) {
+                console.log('Expirando elección', election.id)
                 await Election.expire(election.id);
 
                 const votations = await Votation.findByElectionId(election.id);
@@ -275,12 +276,10 @@ const electionExpired = async (req: Request, res: Response): Promise<Response> =
 
                 let notificationText: string;
                 if (winningOption === 'tie') {
-                    console.log('Empate');
                     notificationText = 'La elección de la votación entre las dos opciones ha terminado en empate.';
                 } else {
                     const winningOptionId = winningOption === 'optionOne' ? election.optionOneId : election.optionTwoId;
                     const winningTenis = await Tenis.findById(winningOptionId);
-                    console.log('winner',winningTenis)
 
                     if (winningTenis) {
                         notificationText = `El ganador en la última votación en la que participaste es: ${winningTenis.brand} - ${winningTenis.name}.`;

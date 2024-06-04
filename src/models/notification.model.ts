@@ -53,7 +53,7 @@ class Notification {
     }
 
     static async findByUserId(userId: string): Promise<NotificationDocument[]> {
-        const notification = await NotificationModel.find({ userId }).exec();
+        const notification = await NotificationModel.find({ userId, active:true } ).exec();
         return notification;
     }
 
@@ -70,7 +70,7 @@ class Notification {
     }
 
     static async closeNotification(id: string): Promise<NotificationDocument | null> {
-        const updatedNotification = await NotificationModel.findByIdAndUpdate(id, { active: true }, { new: false }).exec();
+        const updatedNotification = await NotificationModel.findByIdAndUpdate(id, { active: false }, { new: false }).exec();
         return updatedNotification;
     }
 }

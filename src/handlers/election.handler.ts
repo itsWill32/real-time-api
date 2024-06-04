@@ -1,4 +1,5 @@
 import Election from '../models/election.model';
+import Votation from '../models/votation.model';
 import { WebSocket, WebSocketServer } from 'ws';
 
 interface VotePayload {
@@ -11,8 +12,8 @@ export const registerElectionHandlers = (wss: WebSocketServer, ws: WebSocket, pa
     const voteElection = async (payload: VotePayload): Promise<void> => {
         try {
             const { electionId, option } = payload;
-            console.log(payload);
             // option puede ser "optionOne" o "optionTwo"
+            const userId = (ws as any).user.user.id;
 
             const updatedElection = await Election.vote(option, electionId);
 
@@ -34,11 +35,22 @@ export const registerElectionHandlers = (wss: WebSocketServer, ws: WebSocket, pa
                 return;
             }
 
+            //Crear votación
+            console.log("userId", userId);
+            const votation = new Votation({
+                userId,
+                electionId,
+                optionSelected: option === "optionOne" ? 1 : 2
+            });
+
+            await votation.create();
+
             // Enviar éxito al cliente que votó
             ws.send(JSON.stringify({
                 type: "election:vote_success",
                 success: true,
                 election: updatedElection,
+
                 message: "Se registró el voto correctamente"
             }));
 
@@ -64,46 +76,3 @@ export const registerElectionHandlers = (wss: WebSocketServer, ws: WebSocket, pa
     // Llamar a voteElection con el payload recibido
     voteElection(payload);
 };
-
-
-//EJEMPLO EN EL FRONT
-{/* <body>
-    <script>
-        const token = "tokenGeneradoEnLogin"; // Supón que ya tienes el token
-
-        // Conectar al servidor WebSocket con el token en la URL
-        const ws = new WebSocket(`ws://localhost:3004?token=${token}`);
-
-        // Manejar la conexión abierta
-        ws.onopen = () => {
-            console.log('Conectado al servidor WebSocket');
-
-            // Enviar un mensaje de voto
-            const voteMessage = {
-                type: 'election:vote',
-                payload: {
-                    electionId: '60d1f965bc64a35d88f9e345',
-                    option: 'optionOne'
-                }
-            };
-
-            ws.send(JSON.stringify(voteMessage));
-        };
-
-        // Manejar mensajes recibidos
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            console.log('Mensaje recibido del servidor:', message);
-        };
-
-        // Manejar la conexión cerrada
-        ws.onclose = () => {
-            console.log('Conexión cerrada');
-        };
-
-        // Manejar errores
-        ws.onerror = (error) => {
-            console.error('Error en la conexión WebSocket:', error);
-        };
-    </script>
-</body> */}

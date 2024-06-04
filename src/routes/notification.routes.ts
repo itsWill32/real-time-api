@@ -7,5 +7,6 @@ const notificationsRouter = Router();
 // notificationsRouter.get('/object/:id', httpAuthMiddleware, notificationController.getById);
 notificationsRouter.get('/', httpAuthMiddleware, notificationController.index);
 notificationsRouter.get('/users', httpAuthMiddleware, notificationController.getNotificationsByUser);
+notificationsRouter.get('/close/:notificationId', httpAuthMiddleware, notificationController.closeNotification);
 
 export default notificationsRouter;
