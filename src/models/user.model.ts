@@ -45,6 +45,11 @@ class User {
         return user;
     }
 
+    static async getUsernameById(id: string): Promise<string> {
+        const user = await UserModel.findById(id).exec();
+        return user?.username || '';
+    }
+
     async create(): Promise<UserDocument> {
         const user = new UserModel({
             username: this.username,

@@ -8,6 +8,7 @@
     import { connectToDatabase } from "./configs/db.config"
     import { router as routes } from './routes/index';
     import { registerElectionHandlers } from './handlers/election.handler';
+    import { registerCommentHandlers } from './handlers/comment.handler';
     import { websocketAuthMiddleware } from './middlewares/websocket/auth.middleware';
 
     const port: number | string = process.env.PORT || 3003;
@@ -30,9 +31,13 @@
         websocketAuthMiddleware(ws, req, () => {
             ws.on('message', (message: any) => {
                 const data = JSON.parse(message.toString());
-                // Puedes manejar diferentes tipos de mensajes aquí
+                // Se manejan diferentes tipos de eventos
                 if (data.type === 'election:vote') {
                     registerElectionHandlers(wss, ws, data.payload);
+                }
+
+                if(data.type === 'comment:add'){
+                    registerCommentHandlers(wss, ws, data.payload);
                 }
             });
             signale.success("Cliente conectado: " + (ws as any).user);
