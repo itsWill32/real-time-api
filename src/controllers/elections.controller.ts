@@ -307,9 +307,6 @@ const electionExpired = async (req: Request, res: Response): Promise<Response> =
             message: "Se han expirado las elecciones correctamente"
         });
 
-        
-
-
     } catch (error) {
         console.log(error);
         return res.status(500).json({
